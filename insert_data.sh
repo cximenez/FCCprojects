@@ -10,44 +10,39 @@ fi
 # Do not change code above this line. Use the PSQL variable above to query your database.
 echo $($PSQL "TRUNCATE games, teams")
 
-# to do: insert data from games.csv into database
-# read from games.csv, parse into 
-
-LINE=2
-
 cat games.csv | while IFS="," read YEAR ROUND WINNER OPPONENT WINNER_GOALS OPPONENT_GOALS
 do
 if [[ $YEAR != "year" ]] #don't include header line
 then  
   #look for team name in database using winning teams names
-  TEAM=$($PSQL "SELECT team_id FROM teams WHERE names='$WINNER'")
+  TEAM=$($PSQL "SELECT team_id FROM teams WHERE name='$WINNER'")
   # if not found then insert it into the database and check next team name
   if [[ -z $TEAM ]]
   then
-    INSERT_TEAM_RESULT=$($PSQL "INSERT INTO teams(names) VALUES('$WINNER')")
+    INSERT_TEAM_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$WINNER')")
     if [[ $INSERT_TEAM_RESULT == "INSERT 0 1" ]]
     then
       echo Inserted into teams, $WINNER
     fi
-    #TEAM=$($PSQL "SELECT team_id FROM teams WHERE names='$WINNER'")
+    #TEAM=$($PSQL "SELECT team_id FROM teams WHERE name='$WINNER'")
   fi
 
   #look for team name in database using opponent teams names
-  TEAM=$($PSQL "SELECT team_id FROM teams WHERE names='$OPPONENT'")
+  TEAM=$($PSQL "SELECT team_id FROM teams WHERE name='$OPPONENT'")
   # if not found then insert it into the database and check next team name
   if [[ -z $TEAM ]]
   then
-    INSERT_TEAM_RESULT=$($PSQL "INSERT INTO teams(names) VALUES('$OPPONENT')")
+    INSERT_TEAM_RESULT=$($PSQL "INSERT INTO teams(name) VALUES('$OPPONENT')")
     if [[ $INSERT_TEAM_RESULT == "INSERT 0 1" ]]
     then
       echo Inserted into teams, $OPPONENT
     fi
-    #TEAM=$($PSQL "SELECT team_id FROM teams WHERE names='$OPPONENT'")
+    #TEAM=$($PSQL "SELECT team_id FROM teams WHERE name='$OPPONENT'")
   fi
   
   #get winner_id and opponent_id
-  WINNER_ID=$($PSQL "SELECT team_id FROM teams WHERE names='$WINNER'")
-  OPPONENT_ID=$($PSQL "SELECT team_id FROM teams WHERE names='$OPPONENT'")
+  WINNER_ID=$($PSQL "SELECT team_id FROM teams WHERE name='$WINNER'")
+  OPPONENT_ID=$($PSQL "SELECT team_id FROM teams WHERE name='$OPPONENT'")
 
   #insert games and data into database
   INSERT_GAMES_RESULT=$($PSQL "INSERT INTO games(year, round, winner_id, opponent_id, winner_goals, opponent_goals) 
