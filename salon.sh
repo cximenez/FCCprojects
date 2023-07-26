@@ -26,15 +26,10 @@ MAIN_MENU() {
 
 BOOK() {
   # process service request and ask for phone number
-  #SERVICE_ID_SELECTED=$($PSQL "SELECT service_id FROM services WHERE service_id = $SERVICE_ID")
-  
   echo -e "\nWhat is a good phone number to reach you?"
   read CUSTOMER_PHONE
   CUSTOMER_ID=$($PSQL "SELECT customer_id FROM customers WHERE phone = '$CUSTOMER_PHONE';")
-  #echo -e "'\nGreat. And your name?"
-  #read CUSTOMER_NAME
-
-  
+ 
   # if phone number shows customer doesn't exist in database
   if [[ -z $CUSTOMER_ID ]] 
   then
@@ -43,9 +38,6 @@ BOOK() {
     read CUSTOMER_NAME
     INSERT_NEW_CUSTOMER_RESULT=$($PSQL "INSERT INTO customers(name, phone) VALUES('$CUSTOMER_NAME', '$CUSTOMER_PHONE');") 
     CUSTOMER_ID=$($PSQL "SELECT customer_id FROM customers WHERE phone = '$CUSTOMER_PHONE';")
-  #else
-    #echo -e "\nWelcome back. And a name for the booking?"
-    #read CUSTOMER_NAME
   fi
   CUSTOMER_ID=$($PSQL "SELECT customer_id FROM customers WHERE phone = '$CUSTOMER_PHONE';")
   CUSTOMER_NAME=$($PSQL "SELECT name FROM customers WHERE customer_id = '$CUSTOMER_ID';")
